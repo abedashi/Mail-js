@@ -7,7 +7,6 @@ document.addEventListener('DOMContentLoaded', function () {
   document.querySelector('#compose').addEventListener('click', compose_email);
 
   document.querySelector('form').addEventListener('submit', function () {
-    // e.preventDefault();
     fetch('/emails', {
       method: 'POST',
       body: JSON.stringify({
@@ -79,7 +78,7 @@ function load_mailbox(mailbox) {
         rightDiv.append(email.timestamp);
 
         if (email.read === false) {
-          div.style.backgroundColor = 'rgb(212, 212, 212)';
+          div.style.backgroundColor = 'rgb(234, 236, 239)';
         }
 
         document.querySelector('#emails-view').append(div);
@@ -113,6 +112,16 @@ function load_mailbox(mailbox) {
               const reply = document.createElement('button');
               reply.innerHTML = 'Reply';
               reply.className = 'btn btn-sm btn-outline-primary';
+              reply.addEventListener('click', () => {
+                document.querySelector('#emails-view').style.display = 'none';
+                document.querySelector('#compose-view').style.display = 'block';
+                document.querySelector('#emails-details').style.display = 'none';
+
+                document.querySelector('#compose-recipients').value = email.sender;
+                document.querySelector('#compose-subject').value = `Re: ${email.subject}`;
+                document.querySelector('#compose-body').value = `On ${email.timestamp} ${email.sender} wrote: (${email.body}) - reply: `;
+
+              })
               const archive = document.createElement('button');
               if (mailbox === 'archive') {
                 archive.innerHTML = 'Unarchive';
@@ -148,11 +157,24 @@ function load_mailbox(mailbox) {
               const body = document.createElement('p');
               body.innerHTML = `${email.body}`;
 
+              const container = document.createElement('div');
               if (mailbox === 'sent') {
-                document.querySelector('#emails-details').append(from, to, subject, timestamp, reply, hr, body);
+                container.append(from, to, subject, timestamp, hr, body);
+                document.querySelector('#emails-details').append(container);
               } else {
-                document.querySelector('#emails-details').append(from, to, subject, timestamp, btns, hr, body);
+                container.append(from, to, subject, timestamp, btns, hr, body);
+                document.querySelector('#emails-details').append(container);
               }
+
+              document.querySelector('#inbox').addEventListener('click', () => {
+                container.remove();
+              });
+              document.querySelector('#sent').addEventListener('click', () => {
+                container.remove();
+              });
+              document.querySelector('#archived').addEventListener('click', () => {
+                container.remove();
+              });
 
               fetch(`/emails/${email.id}`, {
                 method: 'PUT',
