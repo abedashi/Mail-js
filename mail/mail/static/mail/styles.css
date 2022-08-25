@@ -1,3 +1,21 @@
 textarea {
     min-height: 400px;
 }
+
+.flex {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border: 1px solid rgb(212, 212, 212);
+    border-radius: 5px;
+    padding: 7px;
+}
+.flex-left {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+.flex-right {
+    display: flex;
+    align-items: center;
+}
